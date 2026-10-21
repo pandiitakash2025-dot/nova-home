@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0b0d">
+<title>NOVA Home</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:25px 20px 35px;background:#0b0b0d;color:#f5f5f5;font-family:Arial,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center}
+.brand{letter-spacing:5px;font-size:13px}
+button,input{font:inherit}
+.pill{background:#19191c;color:#ddd;border:1px solid #333;border-radius:20px;padding:9px 12px;font-size:11px}
+.clock{font-size:70px;font-weight:300;letter-spacing:-4px;margin-top:75px}
+.date{color:#999;margin-top:6px;font-size:14px}
+.search{margin-top:28px;width:100%;padding:16px;border:1px solid #333;border-radius:16px;background:#19191c;color:white;font-size:15px}
+.heading{font-size:11px;letter-spacing:3px;color:#999;margin:33px 0 20px}
+.apps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:23px 6px}
+.app{background:none;border:0;color:#ddd;text-align:center;padding:0;min-width:0}
+.icon{height:54px;width:54px;max-width:100%;margin:0 auto 9px;border:1px solid #36363a;border-radius:18px;background:#202023;display:grid;place-items:center;font-size:22px}
+.appname{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+footer{display:flex;justify-content:space-between;color:#777;font-size:10px;letter-spacing:1px;margin-top:42px}
+#drawer{display:none;position:fixed;inset:0;background:#0b0b0d;padding:25px 20px;overflow:auto;z-index:3}
+#drawer .clock{font-size:40px;margin-top:40px;letter-spacing:-2px}
+#drawer .heading{margin-top:30px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">N O V A</div>
+  <button class="pill" id="open">ALL APPS ↗</button>
+</header>
+
+<div class="clock" id="clock">00:00</div>
+<div class="date" id="date">Your personal space</div>
+<input class="search" id="search" placeholder="Search your apps...">
+
+<div class="heading">YOUR SPACE</div>
+<div class="apps" id="favorites"></div>
+<footer><span>NOVA HOME</span><span>MADE FOR YOU</span></footer>
+
+<div id="drawer">
+  <header>
+    <div class="brand">N O V A / LIBRARY</div>
+    <button class="pill" id="close">CLOSE ✕</button>
+  </header>
+  <div class="clock">Your apps.</div>
+  <div class="date">Everything in one place.</div>
+  <input class="search" id="find" placeholder="Find an app...">
+  <div class="heading">APP LIBRARY</div>
+  <div class="apps" id="all"></div>
+</div>
+
+<script>
+var apps=[
+["Phone","☎","tel:"],
+["Messages","✉","sms:"],
+["Camera","◎",""],
+["Music","♫",""],
+["Browser","◇","https://www.google.com"],
+["Gallery","▧",""],
+["Settings","⚙",""],
+["Calendar","▦",""],
+["Calculator","＋",""],
+["Maps","⌖","https://maps.google.com"],
+["YouTube","▷","https://youtube.com"],
+["ChatGPT","✳","https://chatgpt.com"]
+];
+
+function updateClock(){
+ var d=new Date();
+ document.getElementById("clock").textContent=
+ d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+ document.getElementById("date").textContent=
+ d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"});
+}
+
+function render(containerId,query,limit){
+ var container=document.getElementById(containerId);
+ container.innerHTML="";
+ var q=query.toLowerCase().trim();
+ var list=apps.filter(function(a){return a[0].toLowerCase().indexOf(q)!==-1});
+ if(limit){list=list.slice(0,8)}
+ if(list.length===0){
+  container.innerHTML='<div style="grid-column:1/-1;color:#999;padding:20px 0">No apps found</div>';
+  return;
+ }
+ list.forEach(function(a){
+  var b=document.createElement("button");
+  b.className="app";
+  b.innerHTML='<div class="icon">'+a[1]+'</div><div class="appname">'+a[0]+'</div>';
+  b.onclick=function(){
+   if(a[2]){window.open(a[2],"_blank");}
+   else{alert(a[0]+" needs native Android integration to open directly.");}
+  };
+  container.appendChild(b);
+ });
+}
+
+document.getElementById("search").oninput=function(){
+ render("favorites",this.value,true);
+};
+document.getElementById("find").oninput=function(){
+ render("all",this.value,false);
+};
+document.getElementById("open").onclick=function(){
+ document.getElementById("drawer").style.display="block";
+ render("all",document.getElementById("find").value,false);
+};
+document.getElementById("close").onclick=function(){
+ document.getElementById("drawer").style.display="none";
+};
+updateClock();
+setInterval(updateClock,1000);
+render("favorites","",true);
+render("all","",false);
+</script>
+</body>
+</html>
+
+
