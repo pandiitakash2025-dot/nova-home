@@ -1,3 +1,16 @@
 plugins {
     id 'com.android.application' version '8.7.3'
 }
+
+android {
+    namespace 'com.nova.home'
+    compileSdkVersion 35
+
+    defaultConfig {
+        applicationId 'com.nova.home'
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 1
+        versionName '1.0'
+    }
+}
